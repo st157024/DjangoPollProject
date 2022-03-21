@@ -96,6 +96,7 @@ With the slug, questions can be filtered after category and only questions belon
 into the desired category are given to the template as context
 """
 def show_category(request, slug):
+    category = get_object_or_404(Category, slug=slug)
     category_question_list = Question.objects.filter(question_category__slug=slug)
-    context = {'category_question_list': category_question_list, 'category_name': slug}
+    context = {'category_question_list': category_question_list, 'category_name': category.name}
     return render(request, 'polls/category.html', context)
