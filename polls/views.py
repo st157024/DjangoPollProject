@@ -5,6 +5,8 @@ request -> response (action)
 '''
 
 
+from re import template
+from unicodedata import category
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse
@@ -12,14 +14,23 @@ from django.views import generic
 from django.utils import timezone
 from django.db.models import Count
 
-from .models import Question, Choice
+from .models import Question, Choice, Category
 
-# list of published questions 
+# list of recently published questions 
 class IndexView(generic.ListView):
     #override auto-generated template name to use existing template:
     template_name= 'polls/index.html'
     #override auto-generated context variable to use existing one:
     context_object_name = 'latest_question_list'
+
+
+    #method for additional list as context
+    def get_context_data(self, **kwargs):
+        context = super(IndexView, self).get_context_data(**kwargs)
+        context['category_list'] = Category.objects.order_by('name')
+        return context
+
+
 
     def get_queryset(self):
         #return the last 8 published questions, not including future ones
@@ -44,7 +55,7 @@ class DetailView(generic.DetailView):
     def get_queryset(self):
         #exclude any question that aren't published yet
         """
-        Access to questions with insufficient amount of choices has to be prevented here as well
+        Access to questions with insufficient amount of choices has to be prevented through url guessing as well
         """
         return Question.objects.annotate(number_of_choices=Count('choice')).filter(
             number_of_choices__gte=2
@@ -78,3 +89,8 @@ def vote(request, question_id):
         return HttpResponseRedirect(reverse('polls:results', args=(question_id,)))
 
 
+
+def show_category(request, slug):
+    category_question_list = Question.objects.filter(question_category__slug=slug)
+    context = {'category_question_list': category_question_list, 'category_name': slug}
+    return render(request, 'polls/category.html', context)

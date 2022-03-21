@@ -31,5 +31,18 @@
       <p>No polls are available.</p>
       {% endif %}
     </div>
+
+    <div class="Container">
+      <h1>Categories</h1>
+      {% if category_list %} {% for category in category_list %}
+      <div class="card">
+        <a href="{% url 'polls:category' category.slug %}"
+          >{{ category.name }}</a
+        >
+      </div>
+      {% endfor %} {% else %}
+      <p>No categories are available</p>
+      {% endif %}
+    </div>
   </body>
 </html>
