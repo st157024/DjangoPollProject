@@ -1,0 +1,20 @@
+li a {
+  color: black;
+  font-size: larger;
+}
+
+body {
+  background-color: rgb(133, 155, 214);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+h1 {
+  font-size: xx-large;
+  font-weight: bold;
+}
+
+div {
+  display: flex;
+  flex-direction: column;
+  padding: 30pt;
+}
