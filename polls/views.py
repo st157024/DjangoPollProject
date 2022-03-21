@@ -1,5 +1,8 @@
-# Create your views here. Not a view like an HTML template, but request handler
-# request -> response (action)
+# View creation file. 
+'''
+Not a view like an HTML template, but a request handler
+request -> response (action)
+'''
 
 
 from django.shortcuts import render, get_object_or_404
@@ -7,10 +10,11 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse
 from django.views import generic
 from django.utils import timezone
+from django.db.models import Count
 
 from .models import Question, Choice
 
-
+# list of published questions 
 class IndexView(generic.ListView):
     #override auto-generated template name to use existing template:
     template_name= 'polls/index.html'
@@ -19,9 +23,18 @@ class IndexView(generic.ListView):
 
     def get_queryset(self):
         #return the last 5 published questions, not including future ones
-        return Question.objects.filter(pub_date__lte=timezone.now()).order_by('-pub_date')[:5]
+        #lte => 'less than or equal
+        """
+        Using the annotate function to add a choice count and filter out questions without sufficient choice count
+        """
+        return Question.objects.annotate(number_of_choices=Count('choice')).filter(
+            number_of_choices__gte=2
+            ).filter(
+            pub_date__lte=timezone.now()
+            ).order_by('-pub_date')[:5]
 
 
+#detailed view for a chosen question
 class DetailView(generic.DetailView):
     model = Question
     #override auto-generated template name
@@ -31,13 +44,14 @@ class DetailView(generic.DetailView):
         #exclude any question that aren't published yet
         return Question.objects.filter(pub_date__lte=timezone.now())
 
+#results view for a chosen question (votes)
 class ResultsView(generic.DetailView):
     model = Question
     #override auto-generated template name
     template_name = 'polls/results.html'
 
 
-
+#voting handler
 def vote(request, question_id):
     question = get_object_or_404(Question, pk=question_id)
     try:

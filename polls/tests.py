@@ -1,6 +1,7 @@
 # Create your tests here.
 
 import datetime
+from secrets import choice
 
 from django.test import TestCase
 from django.utils import timezone
@@ -48,6 +49,14 @@ def create_question(question_text, days):
     time = timezone.now() + datetime.timedelta(days=days)
     return Question.objects.create(question_text=question_text, pub_date=time)
 
+#shortcut function to create 2 choices
+def create_two_choices(q):
+    q.choice_set.create(choice_text="choice 1", votes=0)
+    q.choice_set.create(choice_text="choice 2", votes=0)
+
+
+
+
 class QuestionIndexViewTests(TestCase):
 
     def test_no_questions(self):
@@ -65,6 +74,7 @@ class QuestionIndexViewTests(TestCase):
         index page.
         """
         question = create_question(question_text="Past question.", days=-30)
+        create_two_choices(question)
         response = self.client.get(reverse('polls:index'))
         self.assertQuerysetEqual(
             response.context['latest_question_list'],
@@ -76,7 +86,8 @@ class QuestionIndexViewTests(TestCase):
         Questions with a pub_date in the future aren't supposed to be displayed on
         the index page.
         """
-        create_question(question_text="Future question.", days=30)
+        question = create_question(question_text="Future question.", days=30)
+        create_two_choices(question)
         response = self.client.get(reverse('polls:index'))
         self.assertContains(response, "No polls are available.")
         self.assertQuerysetEqual(response.context['latest_question_list'], [])
@@ -86,12 +97,14 @@ class QuestionIndexViewTests(TestCase):
         Even if both past and future questions exist, only past questions
         are displayed.
         """
-        question = create_question(question_text="Past question.", days=-30)
-        create_question(question_text="Future question.", days=30)
+        question1 = create_question(question_text="Past question.", days=-30)
+        create_two_choices(question1)
+        question2 = create_question(question_text="Future question.", days=30)
+        create_two_choices(question2)
         response = self.client.get(reverse('polls:index'))
         self.assertQuerysetEqual(
             response.context['latest_question_list'],
-            [question],
+            [question1],
         )
 
     def test_two_past_questions(self):
@@ -100,11 +113,31 @@ class QuestionIndexViewTests(TestCase):
         """
         question1 = create_question(question_text="Past question 1.", days=-30)
         question2 = create_question(question_text="Past question 2.", days=-5)
+        create_two_choices(question1)
+        create_two_choices(question2)
         response = self.client.get(reverse('polls:index'))
         self.assertQuerysetEqual(
             response.context['latest_question_list'],
             [question2, question1],
         )
+
+
+    def test_question_without_choice(self):
+        """
+        Questions with less than 2 choices are not supposed to be displayed on
+        index page
+        The case of displaying questions with 2 choices is already covered
+        above
+        """
+        question1 = create_question(question_text="Question with 1 choice", days=-5)
+        question1.choice_set.create(choice_text='Only choice', votes=0)
+        question2 = create_question(question_text="Question without choices", days=-5)
+        response = self.client.get(reverse('polls:index'))
+        self.assertContains(response, "No polls are available.")
+        self.assertQuerysetEqual(response.context['latest_question_list'], [])
+
+
+
 
 
 
