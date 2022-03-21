@@ -22,7 +22,7 @@ class IndexView(generic.ListView):
     context_object_name = 'latest_question_list'
 
     def get_queryset(self):
-        #return the last 5 published questions, not including future ones
+        #return the last 8 published questions, not including future ones
         #lte => 'less than or equal
         """
         Using the annotate function to get count of choices associated with a question 
@@ -32,7 +32,7 @@ class IndexView(generic.ListView):
             number_of_choices__gte=2
             ).filter(
             pub_date__lte=timezone.now()
-            ).order_by('-pub_date')[:5]
+            ).order_by('-pub_date')[:8]
 
 
 #detailed view for a chosen question
@@ -76,3 +76,5 @@ def vote(request, question_id):
         selected_choice.save()
         #using HttpResponseRedirect prevents data being posted twice by hitting back button
         return HttpResponseRedirect(reverse('polls:results', args=(question_id,)))
+
+

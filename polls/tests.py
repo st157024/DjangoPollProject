@@ -1,4 +1,4 @@
-# Create your tests here.
+# Tests
 
 import datetime
 from secrets import choice

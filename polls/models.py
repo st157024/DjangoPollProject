@@ -1,4 +1,4 @@
-# Create your models here. 
+# Model classes 
 # With these classes, django is able to create a python DB-access API
 
 import datetime
