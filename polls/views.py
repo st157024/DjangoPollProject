@@ -24,7 +24,7 @@ class IndexView(generic.ListView):
     context_object_name = 'latest_question_list'
 
 
-    #method for additional list as context
+    #method for category list as additional context
     def get_context_data(self, **kwargs):
         context = super(IndexView, self).get_context_data(**kwargs)
         context['category_list'] = Category.objects.order_by('name')
@@ -89,7 +89,12 @@ def vote(request, question_id):
         return HttpResponseRedirect(reverse('polls:results', args=(question_id,)))
 
 
-
+#category view
+"""
+This takes a request and a slug as arguments.
+With the slug, questions can be filtered after category and only questions belonging 
+into the desired category are given to the template as context
+"""
 def show_category(request, slug):
     category_question_list = Question.objects.filter(question_category__slug=slug)
     context = {'category_question_list': category_question_list, 'category_name': slug}

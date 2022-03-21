@@ -10,6 +10,7 @@ from django.urls import reverse
 from .models import Question
 
 
+#test cases for the question data model 
 class QuestionModelTests(TestCase):
 
     def test_was_published_recently_with_future_question(self):
@@ -57,7 +58,7 @@ def create_two_choices(q):
 
 
 
-
+#test cases for the index view
 class QuestionIndexViewTests(TestCase):
 
     def test_no_questions(self):
@@ -140,10 +141,7 @@ class QuestionIndexViewTests(TestCase):
         self.assertQuerysetEqual(response.context['latest_question_list'], [])
 
 
-
-
-
-
+#test cases for question detail view
 class QuestionDetailViewTests(TestCase):
 
     def test_future_question(self):
@@ -179,4 +177,27 @@ class QuestionDetailViewTests(TestCase):
         self.assertEqual(response.status_code, 404)
 
 
+#test cases for results view
+""""
+e.g.:
+    -Results view is supposed to show votes
+    -Vote again link is supposed to redirect to details view
+    -other questions link is supposed to redirect to index view
+"""
+
+
+#test cases for categories data model
+"""
+e.g.:
+    -Questions are not supposed to be published without a category
+"""
+
+#test cases for category view
+"""
+e.g.:
+    -category view is supposed to show a question that belongs to that category
+    -category view is not supposed to show a question that does not belong to that category
+    -category view is supposed to have the same restrictions when showing questions as the index 
+     view (future questions and questions with less than 2 choices)
+"""
 

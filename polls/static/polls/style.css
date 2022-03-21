@@ -75,6 +75,8 @@ h1 {
   background-color: #f1beb0;
 }
 
+/*This hovering effect does not work on Chrome and Edge, did not look into it why this happens
+  It does work in Firefox*/
 .category_card:hover {
   scale: 1.1;
 }
