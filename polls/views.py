@@ -25,7 +25,8 @@ class IndexView(generic.ListView):
         #return the last 5 published questions, not including future ones
         #lte => 'less than or equal
         """
-        Using the annotate function to add a choice count and filter out questions without sufficient choice count
+        Using the annotate function to get count of choices associated with a question 
+        and filter questions without sufficient choice count
         """
         return Question.objects.annotate(number_of_choices=Count('choice')).filter(
             number_of_choices__gte=2

@@ -11,8 +11,8 @@ from django.contrib import admin
 class Question(models.Model):
     #fields
     question_text = models.CharField(max_length=200)
-    question_category = models.CharField(max_length=50)
     pub_date = models.DateTimeField('date published')
+    question_category = models.CharField(max_length=50, blank=True, default='')
 
     #methods
     def __str__(self):

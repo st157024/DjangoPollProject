@@ -9,16 +9,22 @@
   <head> </head>
 
   <body>
+    <div class="header">
+      <h1>A poll website</h1>
+    </div>
+
     <div class="container">
       <h1>Recent polls</h1>
       {% if latest_question_list %}
       <ul>
         {% for question in latest_question_list %}
-        <li>
-          <a href="{% url 'polls:detail' question.id %}"
-            >{{ question.question_text }}</a
-          >
-        </li>
+        <div class="card">
+          <li>
+            <a href="{% url 'polls:detail' question.id %}"
+              >{{ question.question_text }}</a
+            >
+          </li>
+        </div>
         {% endfor %}
       </ul>
       {% else %}
