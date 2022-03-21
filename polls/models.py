@@ -2,17 +2,38 @@
 # With these classes, django is able to create a python DB-access API
 
 import datetime
+from email.policy import default
 from xmlrpc.client import boolean
 
 from django.db import models
 from django.utils import timezone
 from django.contrib import admin
 
+
+
+class Category(models.Model):
+    #fields
+    name = models.CharField(max_length=100, default='')
+    #slug for readable url paths
+    slug = models.SlugField()
+
+    #methods
+    def __str__(self):
+        return self.name
+
+
 class Question(models.Model):
     #fields
     question_text = models.CharField(max_length=200)
     pub_date = models.DateTimeField('date published')
-    question_category = models.CharField(max_length=50, blank=True, default='')
+    #category as foreign key
+    """
+    With the way category is used in this project, one-to-one mapping 
+    would suffice since every question is only given one category.
+    This could be extended with multiple categories and sub-categories though, 
+    hence ForeignKey is used here.
+    """
+    question_category = models.ForeignKey(Category, null=True, blank=True, default='', on_delete=models.SET_DEFAULT)
 
     #methods
     def __str__(self):
