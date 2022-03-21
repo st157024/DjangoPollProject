@@ -67,12 +67,16 @@ h1 {
   display: flex;
   justify-content: center;
   align-items: center;
-  box-shadow: 0px 3px 10px 0px rgba(0, 0, 0, 0.2);
+  box-shadow: 0px 3px 10px 0px #be8476;
   transition: 0.1s;
   border-radius: 10px;
   width: 100pt;
   height: 50pt;
   background-color: #f1beb0;
+}
+
+.category_card:hover {
+  scale: 1.1;
 }
 
 a.button {
