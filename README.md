@@ -1,4 +1,4 @@
-# DjangoPollProject
+# Django Poll Project
 
 This is a simple poll website using the Django docs tutorial. 
 
