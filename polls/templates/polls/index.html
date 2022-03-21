@@ -32,17 +32,19 @@
       {% endif %}
     </div>
 
-    <div class="Container">
+    <div class="container">
       <h1>Categories</h1>
-      {% if category_list %} {% for category in category_list %}
-      <div class="card">
-        <a href="{% url 'polls:category' category.slug %}"
-          >{{ category.name }}</a
-        >
+      <div class="category_container">
+        {% if category_list %} {% for category in category_list %}
+        <div class="category_card">
+          <a class="button" href="{% url 'polls:category' category.slug %}"
+            >{{ category.name }}</a
+          >
+        </div>
+        {% endfor %} {% else %}
+        <p>No categories are available</p>
+        {% endif %}
       </div>
-      {% endfor %} {% else %}
-      <p>No categories are available</p>
-      {% endif %}
     </div>
   </body>
 </html>
