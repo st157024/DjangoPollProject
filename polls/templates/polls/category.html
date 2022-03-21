@@ -1,0 +1,35 @@
+<html>
+  {% load static %}
+  <link
+    rel="stylesheet"
+    type="text/css"
+    href="{% static 'polls/style.css' %}"
+  />
+
+  <head> </head>
+
+  <body>
+    <div class="header">
+      <h1>A poll website</h1>
+    </div>
+
+    <div class="container">
+      <h1>{{ category_name }} polls</h1>
+      {% if category_question_list %}
+      <ul>
+        {% for question in category_question_list %}
+        <div class="card">
+          <li>
+            <a href="{% url 'polls:detail' question.id %}"
+              >{{ question.question_text }}</a
+            >
+          </li>
+        </div>
+        {% endfor %}
+      </ul>
+      {% else %}
+      <p>No polls are available.</p>
+      {% endif %}
+    </div>
+  </body>
+</html>
