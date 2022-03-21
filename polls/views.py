@@ -42,7 +42,14 @@ class DetailView(generic.DetailView):
 
     def get_queryset(self):
         #exclude any question that aren't published yet
-        return Question.objects.filter(pub_date__lte=timezone.now())
+        """
+        Access to questions with insufficient amount of choices has to be prevented here as well
+        """
+        return Question.objects.annotate(number_of_choices=Count('choice')).filter(
+            number_of_choices__gte=2
+            ).filter(
+            pub_date__lte=timezone.now())
+        #return Question.objects.filter(pub_date__lte=timezone.now())
 
 #results view for a chosen question (votes)
 class ResultsView(generic.DetailView):

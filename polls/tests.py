@@ -2,6 +2,7 @@
 
 import datetime
 from secrets import choice
+from venv import create
 
 from django.test import TestCase
 from django.utils import timezone
@@ -70,7 +71,7 @@ class QuestionIndexViewTests(TestCase):
 
     def test_past_question(self):
         """
-        Questions with a pub_date in the past are supposed to be displayed on the
+        Questions with a pub_date in the past and 2 choices are supposed to be displayed on the
         index page.
         """
         question = create_question(question_text="Past question.", days=-30)
@@ -94,13 +95,15 @@ class QuestionIndexViewTests(TestCase):
 
     def test_future_question_and_past_question(self):
         """
-        Even if both past and future questions exist, only past questions
+        Even if both past and future questions exist, only past questions with 2 choices
         are displayed.
         """
         question1 = create_question(question_text="Past question.", days=-30)
         create_two_choices(question1)
         question2 = create_question(question_text="Future question.", days=30)
         create_two_choices(question2)
+        question3 = create_question(question_text="Past question with single choice", days=-30)
+        question3.choice_set.create(choice_text="single choice", votes=0)
         response = self.client.get(reverse('polls:index'))
         self.assertQuerysetEqual(
             response.context['latest_question_list'],
@@ -122,7 +125,7 @@ class QuestionIndexViewTests(TestCase):
         )
 
 
-    def test_question_without_choice(self):
+    def test_without_choice_question(self):
         """
         Questions with less than 2 choices are not supposed to be displayed on
         index page
@@ -149,17 +152,31 @@ class QuestionDetailViewTests(TestCase):
         return a 404 error
         """
         future_question = create_question(question_text='Future question for testing.', days=5)
+        create_two_choices(future_question)
         url = reverse('polls:detail', args=(future_question.id,))
         response = self.client.get(url)
         self.assertEqual(response.status_code, 404)
 
     def test_past_question(self):
         """
-        Detail view of a question with past pub_date is supposed to 
+        Detail view of a question with past pub_date and 2 choices is supposed to 
         display the question's text (not throw an error)
         """
         past_question = create_question(question_text='Past question for testing.', days=-5)
+        create_two_choices(past_question)
         url = reverse('polls:detail', args=(past_question.id,))
         response = self.client.get(url)
         self.assertContains(response, past_question.question_text)
+
+    def test_without_choice_question(self):
+        """
+        Detail view of a question with less than 2 choices is supposed to return a 404 error
+        """
+        question = create_question(question_text='Past question for testing.', days=-5)
+        question.choice_set.create(choice_text="Only choice", votes=0)
+        url = reverse('polls:detail', args=(question.id,))
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 404)
+
+
 
